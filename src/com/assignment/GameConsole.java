@@ -118,6 +118,6 @@ public class GameConsole {
 
     // TODO LIST
     //  중복값 예외처리 추가
-
+    //  입력값 유효성 검사
 
 }
