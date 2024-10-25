@@ -8,11 +8,50 @@ import java.util.Scanner;
 public class GameConsole {
 
     int tryCnt = 0;
-    boolean gameOver;
+    boolean result = false;
 
     List<Integer> tryCntList = new ArrayList<>();
+    Validation validation = new Validation();
 
     Scanner sc = new Scanner(System.in);
+
+    // 게임시작안내문
+    public int printConsole(){
+        System.out.println("<< 환영합니다! 원하시는 번호를 입력해주세요 ! >>");
+        System.out.println("( 1. 게임 시작하기  2. 게임 기록 보기  3. 종료하기 )");
+        int type = sc.nextInt();
+        return type;
+    }
+
+    // 게임 시작
+    public void setGame(){
+        result = false;
+        try {
+            System.out.print("<< 난이도를 설정해주세요. ( 3 ~ 5 )>>");
+            String difficult = sc.next();
+
+            int difficulty = validation.validateDifficulty(difficult);
+
+            int[] answers = createAnswer(difficulty);
+            System.out.println( "\n <<" + difficulty + " 자릿수 게임을 시작합니다. >>");
+
+
+            while(!result) {
+                int[] tryNums = typeNum(difficulty);
+                result = playGame(answers, tryNums);
+            }
+
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
+
+
+
 
     // 1. 정답 숫자 생성하기
     public int[] createAnswer(int difficulty){
@@ -37,19 +76,31 @@ public class GameConsole {
     }
 
     // 2. 정답을 맞추기 위해 숫자를 입력하기
-    public int[] typeNum(int difficulty){
+    public int[] typeNum(int difficulty) {
+        int[] tryNumArr = new int[difficulty];
 
-        System.out.print(difficulty + " 자리 숫자를 입력해 주세요. : ");
+        while (true) {
+            System.out.print(difficulty + " 자리 숫자를 입력해 주세요. : ");
 
-        int tryNum = sc.nextInt();
+            String tryNum = sc.next();
 
-        String[] tryNums = String.valueOf(tryNum).split("");
-        int[] tryNumArr = new int[tryNums.length];
-        for(int i = 0; i<tryNums.length; i++){
-            tryNumArr[i] += Integer.parseInt(tryNums[i]);
+            try {
+                validation.validateTryNumber(tryNum, difficulty);
+                String[] tryNums = tryNum.split("");
+
+                for (int i = 0; i < tryNums.length; i++) {
+                    tryNumArr[i] += Integer.parseInt(tryNums[i]);
+                }
+                break;
+
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+
         }
-
         return tryNumArr;
+
     }
 
 
@@ -57,7 +108,7 @@ public class GameConsole {
     public boolean playGame(int[] answers, int[] tryNums){
         int strikeCnt = 0;
         int ballCnt = 0;
-        boolean result;
+        result = false;
 
         for(int i = 0; i < answers.length; i++){
             for(int j = 0; j < answers.length; j++){
@@ -116,8 +167,6 @@ public class GameConsole {
         return true;
     }
 
-    // TODO LIST
-    //  중복값 예외처리 추가
-    //  입력값 유효성 검사
+
 
 }
